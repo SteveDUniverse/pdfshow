@@ -138,6 +138,7 @@ public class PdfShow {
 		// TABBEDPANE (main window for viewing PDFs)
 
 		tabPane = new JTabbedPane();
+		tabPane.setName("Panel_Main");
 		tabPane.addChangeListener(evt -> {
 			currentTab = (DocTab)tabPane.getSelectedComponent();
 		});
@@ -243,17 +244,21 @@ public class PdfShow {
 		// NAV BOX
 
 		JPanel sidePanel = new JPanel();
+		sidePanel.setName("Panel_SideMenu");
 		sidePanel.setPreferredSize(new Dimension(150, 800));
 		
 		JPanel navBox = new JPanel();
+		navBox.setName("Panel_Navigation");
 		navBox.setLayout(new GridLayout(0,2));
 		
 		// Row 1 - just Up button
 		upButton = new JButton(getMyImageIcon("Chevron-Up"));
 		upButton.addActionListener(e -> moveToPage(currentTab.getPageNumber() - 1));
+		upButton.setName("NavigationButton_Up");
 		navBox.add(upButton);
 		downButton = new JButton(getMyImageIcon("Chevron-Down"));
 		downButton.addActionListener(e -> moveToPage(currentTab.getPageNumber() + 1));
+		downButton.setName("NavigationButton_Down");
 		navBox.add(downButton);
 
 		JButton firstButton = new JButton(getMyImageIcon("Rewind"));
@@ -265,6 +270,7 @@ public class PdfShow {
 
 		// Row 2 - first page, # page, last page
 		pageNumTF = new JTextField("1");
+		pageNumTF.setName("TextField_ActualPage");
 		pageNumTF.addMouseListener(new MouseAdapter() {
 			// If you click in it, select all so you can overtype
 			@Override
@@ -286,7 +292,9 @@ public class PdfShow {
 			}
 		});
 		pageCountTF = new JLabel("1");
+		pageCountTF.setName("Label_TotalPages");
 		JPanel pageNumsPanel = new JPanel();
+		pageNumsPanel.setName("Panel_Numbers");
 		pageNumsPanel.setLayout(new BoxLayout(pageNumsPanel, BoxLayout.LINE_AXIS));
 		pageNumsPanel.add(pageNumTF);
 		pageNumsPanel.add(new JLabel(" of "));
@@ -302,6 +310,7 @@ public class PdfShow {
 
 		JPanel toolBox = new JPanel();
 		toolBox.setLayout(new GridLayout(0, 2));
+		toolBox.setName("Panel_ToolBox");
 
 		// Mode buttons
 
@@ -310,6 +319,7 @@ public class PdfShow {
 		toolBox.add(selectButton);
 
 		textButton = new JButton(getMyImageIcon("Text"));
+		textButton.setName("Button_Text");
 		textButton.addActionListener(e -> gotoState(textDrawState));
 		textButton.setToolTipText("Add text object");
 		toolBox.add(textButton);
@@ -585,7 +595,9 @@ public class PdfShow {
 				JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.DEFAULT_OPTION);
 			pane.setWantsInput(true);
+			pane.setName("Panel_TextInput");
 			JDialog dialog = pane.createDialog(frame, "Text?");
+			dialog.setName("Dialog_TextInput");
 			dialog.setLocation(e.getX(), e.getY());
 			dialog.show();
 			String text = pane.getInputValue().toString();
@@ -985,7 +997,7 @@ public class PdfShow {
 	 * @return an ImageIcon to display the thing.
 	 */
 	private ImageIcon getImageIcon(String imgName) {
-		for (String ext : new String[] {".png", ".jpg" }) {			
+		for (String ext : new String[] {".png", ".jpg" }) {
 			URL imageURL = getClass().getResource(imgName  + ext);
 			if (imageURL != null) {
 				ImageIcon ii = new ImageIcon(imageURL);
