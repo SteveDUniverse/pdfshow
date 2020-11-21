@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Containment</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.rejmi.pdfshow</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Containment (net.rejmi.pdfshow)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Containment</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (33/ 36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.rejmi.pdfshow;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/** Class to implement the contains() method.
+<i>4</i>&nbsp; * In descriptions, UL, UR, LL, LR refer to an object whose bbox
+<i>5</i>&nbsp; * is in one of the four directions relative to its x,y, NOT to 0,0
+<i>6</i>&nbsp; * The coordinate frame throughout this app has (0,0) in the upper left,
+<i>7</i>&nbsp; * as per Java, X Windows, and PostScript.  See the following map:
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; ***************************************************
+<i>10</i>&nbsp; * (0,0)                                  (maxx,0) *
+<i>11</i>&nbsp; *                                                 *
+<i>12</i>&nbsp; *     llxy                              urxy      *
+<i>13</i>&nbsp; *      |                                 |        *
+<i>14</i>&nbsp; *      +----&gt; *********************      |        *
+<i>15</i>&nbsp; *      |      *    1    *    2    *      |        *
+<i>16</i>&nbsp; *      +----&gt; ********************* &lt;----+        *
+<i>17</i>&nbsp; *             *    3    *    4    *      |        *
+<i>18</i>&nbsp; *             ********************* &lt;----+        *
+<i>19</i>&nbsp; *                                                 *
+<i>20</i>&nbsp; * (0,maxy)                            (maxX,maxY) *
+<i>21</i>&nbsp; ***************************************************
+<i>22</i>&nbsp; */
+<b class="nc"><i>23</i>&nbsp;public class Containment {</b>
+<i>24</i>&nbsp;	
+<i>25</i>&nbsp;	/**
+<i>26</i>&nbsp;	 * Determine if the given object contains the given point
+<i>27</i>&nbsp;	 * (which is usually a mouse click location).
+<i>28</i>&nbsp;	 * @param g The GObject that may contain the point
+<i>29</i>&nbsp;	 * @param mx The point&#39;s X coordinate
+<i>30</i>&nbsp;	 * @param my The point&#39;s Y coordinate
+<i>31</i>&nbsp;	 * @return True if the point is contained within the given GObject&#39;s bbox
+<i>32</i>&nbsp;	 */
+<i>33</i>&nbsp;	static boolean contains(GObject g, int mx, int my) {
+<b class="fc"><i>34</i>&nbsp;		int urx = 0, ury = 0, llx = 0, lly = 0;</b>
+<b class="fc"><i>35</i>&nbsp;		if (g.width == 0 &amp;&amp; g.height == 0) {</b>
+<b class="nc"><i>36</i>&nbsp;			return false; // Too small to contain anything</b>
+<i>37</i>&nbsp;		}
+<b class="fc"><i>38</i>&nbsp;		int quad = 0;</b>
+<b class="fc"><i>39</i>&nbsp;		if (g.width &lt; 0 &amp;&amp; g.height &lt; 0) {	// 1</b>
+<i>40</i>&nbsp;			// UL upper left quadrant: width negative, height negative
+<b class="fc"><i>41</i>&nbsp;			quad = 1;</b>
+<b class="fc"><i>42</i>&nbsp;			urx = g.x + g.width;</b>
+<b class="fc"><i>43</i>&nbsp;			ury = g.y + g.height;</b>
+<b class="fc"><i>44</i>&nbsp;			llx = g.x;</b>
+<b class="fc"><i>45</i>&nbsp;			lly = g.y;</b>
+<b class="fc"><i>46</i>&nbsp;		} else if (g.width &gt; 0 &amp;&amp; g.height &lt; 0) { // 2</b>
+<i>47</i>&nbsp;			// UR upper right quadrant: width positive, height negative
+<b class="fc"><i>48</i>&nbsp;			quad = 2;</b>
+<b class="fc"><i>49</i>&nbsp;			llx = g.x;</b>
+<b class="fc"><i>50</i>&nbsp;			lly = g.y + g.height;</b>
+<b class="fc"><i>51</i>&nbsp;			urx = g.x + g.width;</b>
+<b class="fc"><i>52</i>&nbsp;			ury = g.y;</b>
+<b class="fc"><i>53</i>&nbsp;		} else if (g.width &lt; 0 &amp;&amp; g.height &gt; 0) { // 3</b>
+<i>54</i>&nbsp;			// LL lower left quadrant: width negative, height positive
+<b class="fc"><i>55</i>&nbsp;			quad = 3;</b>
+<b class="fc"><i>56</i>&nbsp;			urx = -g.x - -g.width;</b>
+<b class="fc"><i>57</i>&nbsp;			ury = g.y;</b>
+<b class="fc"><i>58</i>&nbsp;			llx = g.x;</b>
+<b class="fc"><i>59</i>&nbsp;			lly = g.y + g.height;</b>
+<b class="fc"><i>60</i>&nbsp;		} else if (g.width &gt;= 0 &amp;&amp; g.height &gt; 0) { // 3</b>
+<i>61</i>&nbsp;			// LR lower right quadrant: width positive, height positive
+<b class="fc"><i>62</i>&nbsp;			quad = 4;</b>
+<b class="fc"><i>63</i>&nbsp;			llx = g.x;</b>
+<b class="fc"><i>64</i>&nbsp;			lly = g.y;</b>
+<b class="fc"><i>65</i>&nbsp;			urx = g.x + g.width;</b>
+<b class="fc"><i>66</i>&nbsp;			ury = g.y + g.height;</b>
+<i>67</i>&nbsp;		}
+<b class="fc"><i>68</i>&nbsp;		System.out.printf(&quot;contains(%s, mx %d, my %d) quad %d\n&quot;, g, mx, my, quad);</b>
+<b class="fc"><i>69</i>&nbsp;		System.out.printf(&quot;BBOX llx %d lly %d; urx %d ury %d;\n&quot;, llx, lly, urx, ury);</b>
+<b class="fc"><i>70</i>&nbsp;		if (urx &lt; llx)</b>
+<b class="fc"><i>71</i>&nbsp;			throw new IllegalArgumentException(&quot;urx &lt; llx for &quot; + g);</b>
+<b class="fc"><i>72</i>&nbsp;		if (ury &lt; lly)</b>
+<b class="nc"><i>73</i>&nbsp;			throw new IllegalArgumentException(&quot;ury &lt; lly for &quot; + g);</b>
+<b class="fc"><i>74</i>&nbsp;		return mx &gt; llx &amp;&amp; my &gt; lly &amp;&amp; mx &lt; urx &amp;&amp; my &lt; ury;</b>
+<i>75</i>&nbsp;	}
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-11-20 17:45</div>
+</div>
+</body>
+</html>
